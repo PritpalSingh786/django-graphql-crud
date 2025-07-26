@@ -143,14 +143,24 @@ http://localhost:8000/graphql/
 
 ## 🟢 1. CREATE Upload (POST with form-data)
 
+> Mutation must exist in your GraphQL schema (`createUpload`)
+
+**Postman** → `POST` → `Body` → `raw` → `JSON`
+
+```json
+{
+  "query": "mutation { createUpload(title: "My First Upload" description: "This is a test upload") {upload {id title description images createdAt } } }"
+}
+```
+
 **Postman** → `POST` → `Body` → `form-data`
 
-| Key          | Value (example)                                                                                                                                                                                                                                                                                                                                 | Type |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| `operations` | `{ "query": "mutation createUpload($title: String!, $description: String!, $uploadedImages: [Upload!]!) { createUpload(title: $title, description: $description, uploadedImages: $uploadedImages) { upload { id title images } } }", "variables": { "title": "Test", "description": "GraphQL upload", "uploadedImages": [null, null] } } `      | Text |
-| `map`        | `{ "0": ["variables.uploadedImages.0"], "1": ["variables.uploadedImages.1"] }`                                                                                                                                                                                                                                                                  | Text |
-| `0`          | Upload file (e.g., `image1.jpg`)                                                                                                                                                                                                                                                                                                                | File |
-| `1`          | Upload file (e.g., `image2.jpg`)                                                                                                                                                                                                                                                                                                                | File |
+| Key        | Type | Value                                                                                                                                                                                               |
+| ---------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| operations | text | `{"query":"mutation($file: Upload!){ createUpload(title:\"My First Upload\", description:\"Test via Postman\", uploadedImages:[$file]){ upload { id title images } } }","variables":{"file":null}}` |
+| map        | text | `{"0":["variables.file"]}`                                                                                                                                                                          |
+| 0          | file | *(choose an image file from your system)*                                                                                                                                                           |
+                                                                                                                                                                                                                                                                                                             | File |
 
 ---
 
@@ -160,7 +170,7 @@ http://localhost:8000/graphql/
 
 ```json
 {
-  "query": "query { uploads { id title description images createdAt } }"
+  "query": "query {  allUploads { id title description images createdAt } }"
 }
 ```
 
@@ -172,13 +182,10 @@ http://localhost:8000/graphql/
 
 ```json
 {
-  "query": "query getUpload($id: ID!) { upload(id: $id) { id title description images createdAt } }",
-  "variables": {
-    "id": "1"
-  }
+  "query": "query {upload(id: 1) {id title description images createdAt}}",
+
 }
 ```
-
 ---
 
 ## ✏️ 4. UPDATE Upload by ID (title and description)
@@ -189,22 +196,17 @@ http://localhost:8000/graphql/
 
 ```json
 {
-  "query": "mutation updateUpload($id: ID!, $title: String!, $description: String!) { updateUpload(id: $id, title: $title, description: $description) { upload { id title description } } }",
-  "variables": {
-    "id": "1",
-    "title": "Updated Title",
-    "description": "Updated Description"
-  }
+  "query": "mutation { updateUpload( id: 1 title: "Updated Title" description: "Updated description here") { upload { id title description images createdAt } } }"
 }
 ```
 **Postman** → `POST` → `Body` → `form-data`
 
-| Key          | Value (example)                                                                                                                                                                                                                                                                                                                                 | Type |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---- |
-| `operations` | `{ "query": "mutation updateUpload($id: ID!, $title: String!, $description: String!, $uploadedImages: [Upload!]) { updateUpload(id: $id, title: $title, description: $description, uploadedImages: $uploadedImages) { upload { id title description images } } }", "variables": { "id": "1", "title": "Updated Post", "description": "Updated via Postman", "uploadedImages": [null, null] } }'      | Text |
-| `map`        | `{ "0": ["variables.uploadedImages.0"], "1": ["variables.uploadedImages.1"] }`                                                                                                                                                                                                                                                                  | Text |
-| `0`          | Upload file (e.g., `image1.jpg`)                                                                                                                                                                                                                                                                                                                | File |
-| `1`          | Upload file (e.g., `image2.jpg`) 
+| Key        | Type | Value                                                                                                                                                                       |
+| ---------- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| operations | text | `{"query":"mutation($file: Upload!){ updateUpload(id:1, title:\"Updated via Postman\", uploadedImages:[$file]){ upload { id title images } } }","variables":{"file":null}}` |
+| map        | text | `{"0":["variables.file"]}`                                                                                                                                                  |
+| 0          | file | *(choose an image file from your system)*                                                                                                                                   |
+
 
 ---
 
